@@ -24,8 +24,7 @@ namespace DevIO.Api.Controllers
         [HttpGet]
         public async Task<IEnumerable<FornecedorViewModel>> ObterTodos()
         {
-            var fornecedor = _mapper.Map<IEnumerable<FornecedorViewModel>>(await _repository.ObterTodos());
-            return fornecedor;
+            return _mapper.Map<IEnumerable<FornecedorViewModel>>(await _repository.ObterTodos());
         }
 
         [HttpGet("{id:guid}")]
@@ -48,7 +47,7 @@ namespace DevIO.Api.Controllers
             return Ok();
         }
 
-        [HttpPut("id:guid")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<FornecedorViewModel>> Atualizar(Guid id, FornecedorViewModel fornecedorViewModel)
         {
             if(id != fornecedorViewModel.Id) return BadRequest();
@@ -61,7 +60,7 @@ namespace DevIO.Api.Controllers
             return Ok();
         }
 
-        [HttpDelete("id:guid")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult<FornecedorViewModel>> Excluir(Guid id)
         {
             var fornecedor = await ObterFornecedorEndereco(id);
@@ -71,11 +70,11 @@ namespace DevIO.Api.Controllers
             return Ok(fornecedor);
         }
 
-        public async Task<FornecedorViewModel> ObterFornecedorProdutosEndereco(Guid id) {
+        private async Task<FornecedorViewModel> ObterFornecedorProdutosEndereco(Guid id) {
             return _mapper.Map<FornecedorViewModel>(await _repository.ObterFornecedorProdutosEndereco(id));
         }
 
-        public async Task<FornecedorViewModel> ObterFornecedorEndereco(Guid id)
+        private async Task<FornecedorViewModel> ObterFornecedorEndereco(Guid id)
         {
             return _mapper.Map<FornecedorViewModel>(await _repository.ObterFornecedorEndereco(id));
         }
