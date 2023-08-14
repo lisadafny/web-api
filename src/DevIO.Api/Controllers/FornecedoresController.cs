@@ -14,7 +14,7 @@ namespace DevIO.Api.Controllers
         private readonly IFornecedorService _service;
         private readonly IMapper _mapper;
 
-        public FornecedoresController(IFornecedorRepository repository, IFornecedorService service, IMapper mapper)
+        public FornecedoresController(IFornecedorRepository repository, IFornecedorService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
             _repository = repository;
             _service = service;
@@ -40,11 +40,11 @@ namespace DevIO.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<FornecedorViewModel>> Adicionar(FornecedorViewModel fornecedorViewModel)
         {
-            if(!ModelState.IsValid) return BadRequest();
+            if(!ModelState.IsValid) return CustomResponse(ModelState);
             var fornecedor = _mapper.Map<Fornecedor>(fornecedorViewModel);
             await _service.Adicionar(fornecedor);
 
-            return Ok();
+            return CustomResponse(fornecedorViewModel);
         }
 
         [HttpPut("{id:guid}")]
@@ -52,22 +52,24 @@ namespace DevIO.Api.Controllers
         {
             if(id != fornecedorViewModel.Id) return BadRequest();
 
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var fornecedor = _mapper.Map<Fornecedor>(fornecedorViewModel);
-            await _service.Adicionar(fornecedor);
+            await _service.Atualizar(fornecedor);
 
-            return Ok();
+            return CustomResponse(fornecedorViewModel);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<FornecedorViewModel>> Excluir(Guid id)
         {
-            var fornecedor = await ObterFornecedorEndereco(id);
+            var fornecedorViewModel = await ObterFornecedorEndereco(id);
 
-            if (fornecedor == null) return NotFound();
+            if (fornecedorViewModel == null) return NotFound();
 
-            return Ok(fornecedor);
+            await _service.Remover(id);
+
+            return CustomResponse(fornecedorViewModel);
         }
 
         private async Task<FornecedorViewModel> ObterFornecedorProdutosEndereco(Guid id) {
