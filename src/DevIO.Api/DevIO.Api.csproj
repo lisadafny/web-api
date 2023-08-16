@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="wwwroot\imagens\" />
   </ItemGroup>
 
 </Project>
